@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: "18.x"
 
-      - run: npm ci --production
+      - run: npm ci
       - run: npm run build --if-present
 
       - uses: actions/upload-artifact@v3
