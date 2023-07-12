@@ -81,6 +81,8 @@ jobs:
   deploy:
     name: Deploy Docker Image
     runs-on: ubuntu-latest
+    environment:
+      name: dev
     needs: package
     env:
       IMG_NAME: ${{ github.repository }}
