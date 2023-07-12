@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
 
+env:
+  TEST_TAG: ${{ vars.DOCKER_USERNAME }}/${{ github.repository }}:test
+  LATEST_TAG: ${{ vars.DOCKER_USERNAME }}/${{ github.repository }}:latest
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,7 +29,7 @@ jobs:
           path: dist/
 
   package:
-    name: Build & push docker image
+    name: push docker image
     runs-on: ubuntu-latest
     needs: build
     env:
@@ -70,6 +74,7 @@ jobs:
         with:
           context: .
           push: true
+          tags: ${{ env.LATEST_TAG }}
           # tags: ${{ steps.metadata.outputs.tags }}
           # push: ${{ github.event.base_ref =='refs/heads/main' && github.ref_type == 'tag' && !startsWith(github.ref, 'refs/tags/v0.')}}
           # tags: ${{ steps.metadata.outputs.tags }}
