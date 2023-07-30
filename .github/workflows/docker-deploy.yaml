@@ -6,6 +6,7 @@ on:
 
 env:
   DEV_LATEST_TAG: ${{ github.repository }}:dev-latest
+  DEV_REPO: echo ${{ github.repository }} | tr / -
 
 jobs:
   build:
@@ -95,6 +96,6 @@ jobs:
           script: |
             docker pull ${{ env.DEV_LATEST_TAG }}
             docker stop ${{ github.repository }} || true
-            docker ps -aq --filter "name=$( echo ${{ github.repository }} | tr / -)" | xargs -r docker rm -f
-            docker run -p 3000:3000 --name=$( echo ${{ github.repository }} | tr / -) ${{ env.DEV_LATEST_TAG }}
+            docker ps -aq --filter "name=${{ env.DEV_REPO }}" | xargs -r docker rm -f
+            docker run -p 3000:3000 --name=${{ env.DEV_REPO }} ${{ env.DEV_LATEST_TAG }}
             echo 'Deployment successful to digital ocean'
