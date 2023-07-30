@@ -94,6 +94,6 @@ jobs:
 
           script: |
             docker pull ${{ env.DEV_LATEST_TAG }}
-            docker rm -rf ${{ github.repository }}
+            docker rm -f ${{ github.repository }}
             docker run -p 3000:3000 --name=${{ github.repository }} ${{ github.repository }}
             echo 'Deployment successful to digital ocean'
