@@ -25,7 +25,7 @@ wss.on('connection', (ws: WebSocket) => {
     });
 
     //send immediatly a feedback to the incoming connection    
-    ws.send('Hi there, I am a WebSocket server');
+    ws.send('Hi there, I am a WebSocket server. DB_HOST is: ' + process.env.DB_HOST);
 });
 
 //start our server
