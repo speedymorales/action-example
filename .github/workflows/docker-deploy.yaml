@@ -6,6 +6,7 @@ on:
 
 env:
   DEV_LATEST_TAG: ${{ github.repository }}:dev-latest
+  DEV_LABEL: ${{ github.event.repository.name }}-dev
 
 jobs:
   build:
@@ -43,24 +44,6 @@ jobs:
           name: dist
           path: dist/
 
-      # - name: Debug
-      #   run: |
-      #     echo "github.ref -> {{ github.ref }}"
-
-      - name: Docker metadata
-        id: metadata
-        uses: docker/metadata-action@v3
-        with:
-          images: ${{ env.IMG_NAME }}
-          tags: |
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=raw,value=latest,enable=${{ github.ref_type != 'tag' }}
-
-      - name: Debug
-        run: |
-          echo "steps.metadata.outputs.tags -> ${{ steps.metadata.outputs.tags }}"
-
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
         with:
@@ -73,10 +56,6 @@ jobs:
           context: .
           push: true
           tags: ${{ env.DEV_LATEST_TAG }}
-          # tags: ${{ steps.metadata.outputs.tags }}
-          # push: ${{ github.event.base_ref =='refs/heads/main' && github.ref_type == 'tag' && !startsWith(github.ref, 'refs/tags/v0.')}}
-          # tags: ${{ steps.metadata.outputs.tags }}
-          # labels: ${{ steps.metadata.outputs.labels }}
 
   deploy:
     name: Deploy Docker Image
@@ -94,7 +73,7 @@ jobs:
 
           script: |
             docker pull ${{ env.DEV_LATEST_TAG }}
-            docker ps -aq --filter "name=${{ github.event.repository.name }}" | xargs -r docker rm -f
+            docker ps -aq --filter "name=${{ env.DEV_LABEL }}" | xargs -r docker rm -f
             docker rmi $(docker images -f "dangling=true" -q)
-            docker run -p 3000:3000 --network=local_network --env-file /home/abicus/.env.dev -d --name=${{ github.event.repository.name }} ${{ env.DEV_LATEST_TAG }}
+            docker run -p 3000:3000 --network=local_network --env-file /home/abicus/.env.dev -d --name=${{ env.DEV_LABEL }} ${{ env.DEV_LATEST_TAG }}
             echo 'Deployment successful to digital ocean'
