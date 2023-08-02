@@ -70,11 +70,12 @@ jobs:
     needs: package
     steps:
       - name: Deploy NodeJS Container
-        uses: appleboy/ssh-action@v0.1.10
+        uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{vars.SSH_HOST}}
-          key: ${{secrets.SSH_KEY}} # Private or public key of the server
+          key: ${{secrets.SSH_KEY}} # Private key of the server
           username: ${{ secrets.SSH_USERNAME }}
+          script_stop: true
 
           script: |
             docker pull ${{ env.CONTAINER_TAG }}
