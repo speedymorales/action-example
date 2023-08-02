@@ -2,7 +2,7 @@ name: Deploy To Dev
 on:
   workflow_dispatch:
   push:
-    branches: [develop]
+    branches: [main]
 
 env:
   DEV_LATEST_TAG: ${{ github.repository }}:dev-latest
