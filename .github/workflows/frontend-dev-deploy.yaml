@@ -57,4 +57,5 @@ jobs:
           key: ${{secrets.SSH_KEY}} # Private key of the server
           username: ${{ secrets.SSH_USERNAME }}
           source: "frontend/dist/*"
+          rm: true
           target: /home/josemo/docker/nginx/html/dev.muenstr
