@@ -46,7 +46,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: fe-dist
-          path: /
+          path: /dist
 
       - name: copy file via ssh password
         uses: appleboy/scp-action@v0.1.4
@@ -54,5 +54,5 @@ jobs:
           host: ${{vars.SSH_HOST}}
           key: ${{secrets.SSH_KEY}} # Private key of the server
           username: ${{ secrets.SSH_USERNAME }}
-          source: "/"
+          source: "/dist"
           target: /home/josemo/docker/nginx/html/dev.muenstr
