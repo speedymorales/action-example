@@ -9,9 +9,7 @@ on:
       - .github/workflows/**
 
 env:
-  CONTAINER_TAG: ${{ github.repository }}:dev-latest
-  CONTAINER_LABEL: ${{ github.event.repository.name }}-dev
-  ENV_FILE: /home/abicus/.env.dev
+  DEV_DIR: /home/${{ vars.SSH_USERNAME }}/docker/nginx/html/dev.muenstr
 
 jobs:
   build:
@@ -49,11 +47,11 @@ jobs:
           name: fe-dist
           path: .
 
-      - name: copy file via ssh password
+      - name: Copy Files via SCP
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{vars.SSH_HOST}}
           key: ${{secrets.SSH_KEY}} # Private key of the server
-          username: ${{ secrets.SSH_USERNAME }}
+          username: ${{ vars.SSH_USERNAME }}
           source: .
-          target: /home/${{ secrets.SSH_USERNAME }}/docker/nginx/html/dev.muenstr
+          target: ${{env.DEV_DIR}}
