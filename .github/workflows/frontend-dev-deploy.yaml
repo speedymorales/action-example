@@ -1,4 +1,4 @@
-name: Backend Deploy To Dev
+name: Frontend Deploy To Dev
 on:
   workflow_dispatch:
   push:
@@ -7,9 +7,6 @@ on:
     paths:
       - frontend/**
       - .github/workflows/**
-
-
-
 
 env:
   CONTAINER_TAG: ${{ github.repository }}:dev-latest
@@ -42,13 +39,14 @@ jobs:
   copy:
     name: Copy Dist Files
     runs-on: ubuntu-latest
+    environment: dev
     needs: build
     steps:
       - name: Download Artifact
         uses: actions/download-artifact@v3
         with:
           name: dist
-          path: dist/
+          path: frontend/dist/
 
       - name: copy file via ssh password
         uses: appleboy/scp-action@v0.1.4
@@ -57,5 +55,5 @@ jobs:
           key: ${{secrets.SSH_KEY}} # Private key of the server
           username: ${{ secrets.SSH_USERNAME }}
           rm: true
-          source: "dist/"
+          source: "frontend/dist/"
           target: /home/josemo/docker/nginx/html/dev.muenstr
