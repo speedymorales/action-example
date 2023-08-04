@@ -1,0 +1,61 @@
+name: Backend Deploy To Dev
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - frontend/**
+      - .github/workflows/**
+
+
+
+
+env:
+  CONTAINER_TAG: ${{ github.repository }}:dev-latest
+  CONTAINER_LABEL: ${{ github.event.repository.name }}-dev
+  ENV_FILE: /home/abicus/.env.dev
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18.x"
+
+      - working-directory: frontend
+        run: npm ci
+      - working-directory: frontend
+        run: npm run build --if-present
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: frontend/dist/
+
+  copy:
+    name: Copy Dist Files
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: dist/
+
+      - name: copy file via ssh password
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{vars.SSH_HOST}}
+          key: ${{secrets.SSH_KEY}} # Private key of the server
+          username: ${{ secrets.SSH_USERNAME }}
+          rm: true
+          source: "dist/"
+          target: /home/josemo/docker/nginx/html/dev.muenstr
